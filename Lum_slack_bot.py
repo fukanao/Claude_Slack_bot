@@ -10,9 +10,6 @@ from langchain.prompts.chat import (
     HumanMessagePromptTemplate,
 )
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
-
-
-
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
