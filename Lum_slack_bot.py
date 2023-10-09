@@ -99,12 +99,25 @@ def handle_message(body, say, client, channel_id):
         # メッセージを追加する前に「ラムちゃんが考えています...」と表示
         message_ts = say("ラムちゃんが考えています...", channel=channel_id)
 
+
+        def chat_claude(human_input):
+            resp = chat_llm_chain.predict(human_input=human_input)
+            response_text = ""
+            for chunk in resp:
+                if chunk:
+                    content = chunk
+                    if content:
+                        response_text += content
+                        yield content
+
+        
+
         # Stream
         response_text = ""
         last_update = -1
         text = last_post_text = ""
 
-        for sentense in chat_llm_chain.predict(human_input=human_input):
+        for sentense in chat_claude(human_input):
             response_text += sentense
             if (time.time() - last_update) > .5:
                 last_update = time.time()
