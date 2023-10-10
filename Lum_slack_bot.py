@@ -107,7 +107,10 @@ def handle_message(body, say, client, channel_id):
         for sentense in chat_llm_chain.predict(human_input=human_input):
             response_text += sentense
             if response_text != " ": #からの場合除外
-                if (time.time() - last_update) > .4:
+                #if (time.time() - last_update) > .4:
+                #if (time.time() - last_update) > .2:
+                #if (time.time() - last_update) > .6:
+                if (time.time() - last_update) > .1:
                     last_update = time.time()
                     last_post_text = response_text
                     client.chat_update(
@@ -115,6 +118,9 @@ def handle_message(body, say, client, channel_id):
                         ts = message_ts['ts'],
                         text = response_text
                     )
+
+            #print("#122 response_text =",response_text)
+
         """
         print("#120 response_text =",response_text)
         if response_text != " ": #からの場合除外
@@ -130,8 +136,9 @@ def handle_message(body, say, client, channel_id):
         # Claudeから回答取得
         #response = chat_llm_chain.predict(human_input=human_input)
 
-        say(response_text, delete_original="ラムちゃんが考えています...", channel=channel_id)
-        client.chat_delete(ts=message_ts['ts'], channel=channel_id)
+        # 20231010
+        #say(response_text, delete_original="ラムちゃんが考えています...", channel=channel_id)
+        #client.chat_delete(ts=message_ts['ts'], channel=channel_id)
 
     except Exception as e:
         say(str(e))
