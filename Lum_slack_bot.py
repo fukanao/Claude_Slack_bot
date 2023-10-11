@@ -47,7 +47,7 @@ llm = ChatAnthropic(
     model="claude-2",
     temperature=0,
     max_tokens=10000,
-    streaming=True,
+    #streaming=True,
 )
 
 # userごとのインスタンス辞書
