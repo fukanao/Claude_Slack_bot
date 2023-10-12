@@ -95,6 +95,16 @@ def handle_message(body, say, client, channel_id):
 
     chat_llm_chain = user_chains[user]
 
+    def res(human_input):
+        response_text = chat_llm_chain.predict(human_input=human_input)
+        for chunk in response_text:
+            if chunk:
+                content = response_text["choices"][0]["delta"].get("content")
+                if content:
+                    yield content
+            
+
+
     try:
         # メッセージを追加する前に「ラムちゃんが考えています...」と表示
         message_ts = say("ラムちゃんが考えています...", channel=channel_id)
@@ -104,13 +114,11 @@ def handle_message(body, say, client, channel_id):
         last_update = -1
         text = last_post_text = ""
 
-        for sentense in chat_llm_chain.predict(human_input=human_input):
+        #for sentense in chat_llm_chain.predict(human_input=human_input):
+        for sentense in res(human_input):
             response_text += sentense
             if response_text != " ": #からの場合除外
-                #if (time.time() - last_update) > .4:
-                #if (time.time() - last_update) > .2:
-                #if (time.time() - last_update) > .6:
-                if (time.time() - last_update) > .1:
+                if (time.time() - last_update) > .4:
                     last_update = time.time()
                     last_post_text = response_text
                     client.chat_update(
@@ -121,16 +129,13 @@ def handle_message(body, say, client, channel_id):
 
             #print("#122 response_text =",response_text)
 
-        """
-        print("#120 response_text =",response_text)
-        if response_text != " ": #からの場合除外
-            if last_post_text != response_text:
-                client.chat_update(
-                    channel = channel_id,
-                    ts = message_ts['ts'],
-                    text = response_text
-                )
-        """
+            if response_text != " ": #からの場合除外
+                if last_post_text != response_text:
+                    client.chat_update(
+                        channel = channel_id,
+                        ts = message_ts['ts'],
+                        text = response_text
+                    )
 
 
         # Claudeから回答取得
